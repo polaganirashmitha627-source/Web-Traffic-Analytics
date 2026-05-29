@@ -1,0 +1,86 @@
+import pandas as pd
+
+# Load dataset
+df = pd.read_csv("../data/website_traffic.csv")
+
+print("Website Traffic Dataset")
+print(df)
+
+# --------------------------
+# Basic Analysis
+# --------------------------
+
+total_visits = len(df)
+
+most_viewed_page = df["Page"].value_counts().idxmax()
+
+avg_session_duration = df["SessionDuration"].mean()
+
+bounce_rate = (
+    len(df[df["Bounce"] == "Yes"]) / total_visits
+) * 100
+
+print("\n------ WEB TRAFFIC ANALYSIS ------")
+print("Total Visits:", total_visits)
+print("Most Viewed Page:", most_viewed_page)
+print("Average Session Duration:",
+      round(avg_session_duration, 2),
+      "minutes")
+print("Bounce Rate:",
+      round(bounce_rate, 2), "%")
+
+# --------------------------
+# User Journey Analysis
+# --------------------------
+
+page_views = df["Page"].value_counts()
+
+print("\nPage Views:")
+print(page_views)
+
+# --------------------------
+# Suggestions
+# --------------------------
+
+suggestions = []
+
+if bounce_rate > 40:
+    suggestions.append(
+        "Improve landing page content to reduce bounce rate"
+    )
+
+if avg_session_duration < 5:
+    suggestions.append(
+        "Increase user engagement with better content"
+    )
+
+summary = f"""
+Web Traffic Analytics Report
+
+Total Visits: {total_visits}
+Most Viewed Page: {most_viewed_page}
+Average Session Duration:
+{avg_session_duration:.2f} minutes
+
+Bounce Rate:
+{bounce_rate:.2f}%
+
+Suggestions:
+"""
+
+for s in suggestions:
+    summary += f"- {s}\n"
+
+# Save outputs
+page_views.to_csv(
+    "../output/page_views_report.csv"
+)
+
+with open(
+    "../output/traffic_summary.txt",
+    "w"
+) as file:
+    file.write(summary)
+
+print("\nAnalysis Completed!")
+print("Files saved in output folder.")
